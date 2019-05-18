@@ -4,6 +4,7 @@ public class Player {
     String name = "";
     ArrayList<String> playerCards = new ArrayList<String>();
     int total = 0;
+    boolean bust = false;
 
     public Player(){
         setName("???");
@@ -58,6 +59,16 @@ public class Player {
 
     public int getTotal(){
         return total;
+    }
+
+    public void busted(){
+        bust = true;
+    }
+    public void setBust(boolean bust){
+        this.bust = bust;
+    }
+    public boolean bustStatus(){
+        return bust;
     }
 
 }

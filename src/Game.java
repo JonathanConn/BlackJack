@@ -64,23 +64,26 @@ public class Game {
     public void nextPlayerTurn(){
         for(Player p : playersList){
             boolean complete = false;
-            System.out.print(p.getName());
+            p.printCards();
             do {
                 System.out.println(" hit or check");
                 String dec = scan.nextLine();
 
                 if (dec.toLowerCase().equals("hit")) {
                     p.addCard(deck.dealCard());
+                    p.printCards();
                 } else if (dec.toLowerCase().equals("check")) {
                     complete = true;
                 } else {
                     System.out.println("bad input try again");
                 }
+
                 if(p.getTotal() > 21){
-                    System.out.print("Bust: ");
+                    System.out.println("Bust\n");
+                    p.busted();
                     complete = true;
                 }
-                p.printCards();
+
             }while(!complete);
         }
     }
@@ -93,6 +96,24 @@ public class Game {
             dealer.printSneakCard();
         }
         System.out.println("Dealer Checks");
+    }
+
+    public void findWinner(){
+        boolean dealerwin = true;
+
+        dealer.printCards();
+
+        for(Player p : playersList){
+            if(p.getTotal() > dealer.getTotal() && p.bustStatus() == false){
+                System.out.println(p.getName() + " wins!");
+                dealerwin = false;
+            }
+        }
+
+        if(dealerwin){
+            System.out.println("Dealer wins");
+        }
+
     }
 
 }

@@ -15,8 +15,12 @@ public class Main {
         */
 
         curGame.deal();
+        System.out.println("\n------------\n");
         curGame.nextPlayerTurn();
+        System.out.println("\n------------\n");
         curGame.nextDealerTurn();
+        System.out.println("\n------------\n");
+        curGame.findWinner();
     }
 
 }
