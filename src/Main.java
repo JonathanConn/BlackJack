@@ -15,7 +15,8 @@ public class Main {
         */
 
         curGame.deal();
-        curGame.nextTurn();
+        curGame.nextPlayerTurn();
+        curGame.nextDealerTurn();
     }
 
 }

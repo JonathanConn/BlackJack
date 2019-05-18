@@ -4,6 +4,7 @@ public class Game {
     static boolean gameRunning = true;
     static ArrayList<Player> playersList = new ArrayList<Player>();
     static Deck deck = new Deck();
+    Dealer dealer = new Dealer();
 
     Scanner scan = new Scanner(System.in);
 
@@ -50,13 +51,17 @@ public class Game {
     }
 
     public void deal(){
+        dealer.addCard(deck.dealCard());
+        dealer.addCard(deck.dealCard());
+        dealer.printSneakCard();
+
         for(Player p : playersList){
             p.addCard(deck.dealCard());
             p.addCard(deck.dealCard());
             p.printCards();
         }
     }
-    public void nextTurn(){
+    public void nextPlayerTurn(){
         for(Player p : playersList){
             boolean complete = false;
             System.out.print(p.getName());
@@ -66,16 +71,28 @@ public class Game {
 
                 if (dec.toLowerCase().equals("hit")) {
                     p.addCard(deck.dealCard());
-                    complete = true;
                 } else if (dec.toLowerCase().equals("check")) {
                     complete = true;
                 } else {
                     System.out.println("bad input try again");
                 }
-
+                if(p.getTotal() > 21){
+                    System.out.print("Bust: ");
+                    complete = true;
+                }
+                p.printCards();
             }while(!complete);
-            p.printCards();
         }
+    }
+
+    public void nextDealerTurn(){
+        dealer.printSneakCard();
+        while(dealer.logicHit()){
+            System.out.println("Dealer hits: ");
+            dealer.addCard(deck.dealCard());
+            dealer.printSneakCard();
+        }
+        System.out.println("Dealer Checks");
     }
 
 }
