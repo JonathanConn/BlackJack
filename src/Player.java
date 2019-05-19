@@ -6,6 +6,7 @@ public class Player {
     int total = 0;
     boolean bust = false;
 
+
     public Player(){
         setName("???");
     }
@@ -41,7 +42,7 @@ public class Player {
     public void updateTotal(){
         total = 0;
         for(String s : playerCards){
-           String temp = s.substring(1);
+           String temp = s.substring(0,1);
            if(temp.equals("K") || temp.equals("Q") || temp.equals("J") || temp.equals("10")){
                total += 10;
            }else if(!temp.equals("A")){
