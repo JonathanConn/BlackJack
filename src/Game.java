@@ -1,12 +1,13 @@
+import javafx.application.Application;
+
 import java.util.ArrayList;
-import java.util.Scanner;
 public class Game {
     static boolean gameRunning = true;
     static ArrayList<Player> playersList = new ArrayList<Player>();
     static Deck deck = new Deck();
     Dealer dealer = new Dealer();
 
-    Scanner scan = new Scanner(System.in);
+    fxDriver gui = new fxDriver();
 
     public Game(){
 
@@ -16,12 +17,17 @@ public class Game {
         for(int i = 0; i < numPlayers; i++){
             playersList.add(new Player());
         }
+        Application.launch(gui.getClass());
     }
 
     public Game(int numPlayers, ArrayList<String> pNames){
         for(int i = 0; i < numPlayers; i++){
             playersList.add(new Player(pNames.get(i)));
         }
+    }
+
+    public ArrayList<Player> getPlayersList(){
+        return playersList;
     }
 
     public void removePlayer(Player name){
@@ -64,44 +70,18 @@ public class Game {
     public void nextPlayerTurn(){
         for(Player p : playersList){
             boolean complete = false;
-            p.printCards();
             do {
-                System.out.println(" hit or check");
-                String dec = scan.nextLine();
-
-                if (dec.toLowerCase().equals("hit")) {
-                    p.addCard(deck.dealCard());
-                    p.printCards();
-                } else if (dec.toLowerCase().equals("check")) {
-                    complete = true;
-                } else {
-                    System.out.println("bad input try again");
-                }
-
-                if(p.getTotal() > 21){
-                    System.out.println("Bust\n");
-                    p.busted();
-                    complete = true;
-                }
 
             }while(!complete);
         }
     }
 
     public void nextDealerTurn(){
-        dealer.printSneakCard();
-        while(dealer.logicHit()){
-            System.out.println("Dealer hits: ");
-            dealer.addCard(deck.dealCard());
-            dealer.printSneakCard();
-        }
-        System.out.println("Dealer Checks");
+
     }
 
     public void findWinner(){
         boolean dealerwin = true;
-
-        dealer.printCards();
 
         for(Player p : playersList){
             if(p.getTotal() > dealer.getTotal() && p.bustStatus() == false){

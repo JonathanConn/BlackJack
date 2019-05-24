@@ -1,17 +1,17 @@
+import javafx.application.Application;
+
 import java.util.ArrayList;
 
 public class Main {
 
     public static void main(String[] args){
-        ArrayList<String> names = new ArrayList<String>();
-        names.add("Bob");
+        Game game = new Game(1);
 
-        Game curGame = new Game(2, names);
+
 
         /*
         while(curGame.isGameRunning()){
         }
-        */
 
         curGame.deal();
         System.out.println("\n------------\n");
@@ -20,6 +20,7 @@ public class Main {
         curGame.nextDealerTurn();
         System.out.println("\n------------\n");
         curGame.findWinner();
-    }
+        */
 
+    }
 }

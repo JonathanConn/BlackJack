@@ -1,5 +1,7 @@
 import javafx.application.Application;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -13,16 +15,22 @@ import javafx.stage.Stage;
 import javafx.scene.layout.HBox;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
+//        cardHbox.getChildren().add(imageView1);
 
 public class fxDriver extends Application {
+    BorderPane tablePane = new BorderPane();
+    BorderPane playerPane = new BorderPane();
+    BorderPane dealerPane = new BorderPane();
+
+    HBox cardHbox = new HBox();
+
+    Image image = null;
+
     @Override
     public void start(Stage stage) {
 
-        BorderPane table = new BorderPane();
-        BorderPane player = new BorderPane();
-
-        Image image = null;
         try {
             image = new Image(new FileInputStream("assets/2C.png"));
         }catch (Exception e){
@@ -34,25 +42,61 @@ public class fxDriver extends Application {
         imageView1.setFitHeight(150);
         imageView1.setPreserveRatio(true);
 
-        HBox hbox = new HBox();
-        hbox.setPadding(new Insets(15,15,15,15));
-        hbox.setStyle("-fx-background-color: #336699");
-        hbox.setAlignment(Pos.CENTER);
+        cardHbox.setPadding(new Insets(15,15,15,15));
+        cardHbox.setStyle("-fx-background-color: #005e1d");
+        cardHbox.setAlignment(Pos.CENTER);
 
-        hbox.getChildren().add(imageView1);
+        cardHbox.getChildren().add(imageView1);
 
-        player.setCenter(hbox);
-        table.setBottom(player);
+        playerPane.setCenter(cardHbox);
+        tablePane.setBottom(playerPane);
 
-        Scene scene = new Scene(table);
+        Button testButton = new Button("FLIP");
+
+        EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e){
+
+            }
+        };
+        testButton.setOnAction(event);
+
+        tablePane.setTop(testButton);
+
+        Scene scene = new Scene(tablePane);
 
         stage.setTitle("BlackJack");
+        stage.setWidth(1000);
+        stage.setHeight(800);
+
 
         stage.setScene(scene);
-        stage.setMaximized(true);
+
+        //maybe?
+        //stage.setMaximized(true);
+
         stage.show();
     }
     public static void main(String args[]){
         launch(args);
     }
+
+    public void updatePlayerCards(String card){
+        try {
+            image = new Image(new FileInputStream("assets/" + card + ".png"));
+        }catch (Exception e){
+            System.out.println("file not found");
+        }
+        ImageView imageView1 = new ImageView(image);
+        imageView1.setFitWidth(100);
+        imageView1.setFitHeight(150);
+        imageView1.setPreserveRatio(true);
+
+        cardHbox.getChildren().add(imageView1);
+
+    }
+    public void updateDealerCards(){
+
+    }
+
+
 }
