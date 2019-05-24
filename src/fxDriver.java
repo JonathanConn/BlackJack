@@ -1,51 +1,55 @@
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.scene.layout.HBox;
+
+import java.io.FileInputStream;
+
 
 public class fxDriver extends Application {
     @Override
     public void start(Stage stage) {
-        //creating a text field
-        TextField textField = new TextField();
 
-        //Creating the play button
-        Button hitButton = new Button("Hit");
+        BorderPane table = new BorderPane();
+        BorderPane player = new BorderPane();
 
-        //Creating the stop button
-        Button checkButton = new Button("Check");
+        Image image = null;
+        try {
+            image = new Image(new FileInputStream("assets/2C.png"));
+        }catch (Exception e){
+            System.out.println("file not found");
+        }
 
-        //Instantiating the HBox class
+        ImageView imageView1 = new ImageView(image);
+        imageView1.setFitWidth(100);
+        imageView1.setFitHeight(150);
+        imageView1.setPreserveRatio(true);
+
         HBox hbox = new HBox();
+        hbox.setPadding(new Insets(15,15,15,15));
+        hbox.setStyle("-fx-background-color: #336699");
+        hbox.setAlignment(Pos.CENTER);
 
-        //Setting the space between the nodes of a HBox pane
-        hbox.setSpacing(10);
+        hbox.getChildren().add(imageView1);
 
-        //Setting the margin to the nodes
-        hbox.setMargin(textField, new Insets(20, 20, 20, 20));
-        hbox.setMargin(hitButton, new Insets(20, 20, 20, 20));
-        hbox.setMargin(checkButton, new Insets(20, 20, 20, 20));
+        player.setCenter(hbox);
+        table.setBottom(player);
 
-        //retrieving the observable list of the HBox
-        ObservableList list = hbox.getChildren();
+        Scene scene = new Scene(table);
 
-        //Adding all the nodes to the observable list (HBox)
-        list.addAll(textField, hitButton, checkButton);
-
-        //Creating a scene object
-        Scene scene = new Scene(hbox);
-
-        //Setting title to the Stage
         stage.setTitle("BlackJack");
 
-        //Adding scene to the stage
         stage.setScene(scene);
         stage.setMaximized(true);
-        //Displaying the contents of the stage
         stage.show();
     }
     public static void main(String args[]){
