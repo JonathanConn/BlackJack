@@ -1,13 +1,15 @@
 import javafx.application.Application;
 
 import java.util.ArrayList;
-public class Game {
+public class Game{
     static boolean gameRunning = true;
     static ArrayList<Player> playersList = new ArrayList<Player>();
     static Deck deck = new Deck();
     Dealer dealer = new Dealer();
 
-    fxDriver gui = new fxDriver();
+    //fxDriver gui = new fxDriver();
+
+    private String tempCard = "";
 
     public Game(){
 
@@ -17,7 +19,6 @@ public class Game {
         for(int i = 0; i < numPlayers; i++){
             playersList.add(new Player());
         }
-        Application.launch(gui.getClass());
     }
 
     public Game(int numPlayers, ArrayList<String> pNames){
@@ -25,7 +26,12 @@ public class Game {
             playersList.add(new Player(pNames.get(i)));
         }
     }
+/*
+    public void launchGui(){
+        Application.launch(gui.getClass());
 
+    }
+*/
     public ArrayList<Player> getPlayersList(){
         return playersList;
     }
@@ -57,15 +63,24 @@ public class Game {
     }
 
     public void deal(){
-        dealer.addCard(deck.dealCard());
-        dealer.addCard(deck.dealCard());
-        dealer.printSneakCard();
+/*        tempCard = deck.dealCard();
+        dealer.addCard(tempCard);
+
+        tempCard = deck.dealCard();
+        dealer.addCard(tempCard);
 
         for(Player p : playersList){
-            p.addCard(deck.dealCard());
-            p.addCard(deck.dealCard());
-            p.printCards();
-        }
+            tempCard = deck.dealCard();
+            p.addCard(tempCard);
+            gui.addPlayerCards(tempCard);
+
+            tempCard = deck.dealCard();
+            p.addCard(tempCard);
+            gui.addPlayerCards(tempCard);
+*/
+            System.out.println("Cards delt");
+
+     //   }
     }
     public void nextPlayerTurn(){
         for(Player p : playersList){
