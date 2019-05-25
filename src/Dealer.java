@@ -57,7 +57,7 @@ public class Dealer{
     }
 
     public boolean logicHit(){
-        if(this.getTotal() <= 17){
+        if(this.getTotal() <= 16){
             return true;
         }
         return false;

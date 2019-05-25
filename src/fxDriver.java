@@ -19,13 +19,14 @@ import javafx.scene.layout.HBox;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-
-//        cardHbox.getChildren().add(imageView1);
+import java.util.HashMap;
 
 public class fxDriver extends Application {
 
     static boolean gameRunning = true;
     static ArrayList<Player> playersList = new ArrayList<Player>();
+    static HashMap<Player, Boolean> checkStatus = new HashMap<>();
+
     static Deck deck = new Deck();
     Dealer dealer = new Dealer();
     private String tempCard = "";
@@ -48,15 +49,15 @@ public class fxDriver extends Application {
     public void start(Stage stage) {
 
         cardHbox.setPadding(new Insets(15,15,15,15));
-        cardHbox.setStyle("-fx-background-color: #005e1d");
+        cardHbox.setStyle("-fx-background-color: #119b00");
         cardHbox.setAlignment(Pos.CENTER);
 
         dealerHbox.setPadding(new Insets(15,15,15,15));
-        dealerHbox.setStyle("-fx-background-color: #99130D");
+        dealerHbox.setStyle("-fx-background-color: #119b00");
         dealerHbox.setAlignment(Pos.CENTER);
 
         playerHbox.setPadding(new Insets(15,15,15,15));
-        playerHbox.setStyle("-fx-background-color: #0D9995");
+        playerHbox.setStyle("-fx-background-color: #119b00");
         playerHbox.setAlignment(Pos.CENTER);
 
         dealerPane.setCenter(dealerHbox);
@@ -83,7 +84,7 @@ public class fxDriver extends Application {
         };
         EventHandler<ActionEvent> checkEvent = new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e){
-
+                check(playersList.get(0));
             }
         };
 
@@ -91,13 +92,8 @@ public class fxDriver extends Application {
         hitButton.setOnAction(hitEvent);
         checkButton.setOnAction(checkEvent);
 
-        dealButton.setPadding(new Insets(15,15,15,15));
-        hitButton.setPadding(new Insets(15,15,15,15));
-        checkButton.setPadding(new Insets(15,15,15,15));
-
-
-        buttonVbox.setPadding(new Insets(15,15,15,15));
-        buttonVbox.setStyle("-fx-background-color: #8b0099");
+        buttonVbox.setPadding(new Insets(0,15,0,15));
+        buttonVbox.setStyle("-fx-background-color: #99000b");
         buttonVbox.setAlignment(Pos.CENTER);
 
         buttonVbox.getChildren().addAll(dealButton, hitButton, checkButton);
@@ -130,8 +126,31 @@ public class fxDriver extends Application {
         dealerHbox.getChildren().add(cardView);
     }
     public void resetDealerCardsGUI(){
-        dealerHbox.getChildren().removeAll();
+        dealerHbox.getChildren().clear();
     }
+    public void showDealerCardsGUI(){
+        resetDealerCardsGUI();
+        ArrayList<String> dealerCards = dealer.getCards();
+        for(String s : dealerCards){
+            System.out.println(s + " dealer card");
+            addDealerCardsGUI(cardToImage(s));
+        }
+    }
+
+    public ImageView cardToImage(String card){
+        try {
+            image = new Image(new FileInputStream("assets/" + card + ".png"));
+        }catch (Exception e){
+            System.out.println("file not found");
+        }
+
+        ImageView imageView1 = new ImageView(image);
+        imageView1.setFitWidth(100);
+        imageView1.setFitHeight(150);
+        imageView1.setPreserveRatio(true);
+        return imageView1;
+    }
+
 
     public void deal(){
         for(Player p : playersList) {
@@ -170,18 +189,39 @@ public class fxDriver extends Application {
         }
     }
 
-    public ImageView cardToImage(String card){
-        try {
-            image = new Image(new FileInputStream("assets/" + card + ".png"));
-        }catch (Exception e){
-            System.out.println("file not found");
+    public void check(Player p){
+        checkStatus.put(p, true);
+        if(!checkStatus.containsKey(false)){
+            dealersTurn();
+        }
+    }
+    public void dealersTurn(){
+        dealer.updateTotal();
+        while(dealer.logicHit() == true){
+            tempCard = deck.dealCard();
+            dealer.addCard(tempCard);
+            addDealerCardsGUI(cardToImage(tempCard));
+            dealer.updateTotal();
+        }
+        findWinner();
+    }
+
+    public void findWinner(){
+        boolean dealerwin = true;
+
+        for(Player p : playersList){
+            if(p.getTotal() > dealer.getTotal() && p.bustStatus() == false){
+                System.out.println(p.getName() + " wins!");
+                dealerwin = false;
+            }
         }
 
-        ImageView imageView1 = new ImageView(image);
-        imageView1.setFitWidth(100);
-        imageView1.setFitHeight(150);
-        imageView1.setPreserveRatio(true);
-        return imageView1;
+        if(dealerwin){
+            System.out.println("Dealer wins");
+        }
+
+        showDealerCardsGUI();
+
     }
 
 }
