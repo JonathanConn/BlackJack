@@ -13,6 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.layout.HBox;
 
@@ -26,6 +27,15 @@ public class fxDriver extends Application {
     static boolean gameRunning = true;
     static ArrayList<Player> playersList = new ArrayList<Player>();
     static HashMap<Player, Boolean> checkStatus = new HashMap<>();
+    static ArrayList<String> trackTurn = new ArrayList<String>(){
+        {
+            add("start");
+            add("player");
+            add("dealer");
+            add("end");
+        }
+    };
+    static String curTurn;
 
     static Deck deck = new Deck();
     Dealer dealer = new Dealer();
@@ -40,10 +50,13 @@ public class fxDriver extends Application {
     HBox cardHbox = new HBox();
     HBox dealerHbox = new HBox();
     HBox playerHbox = new HBox();
-
-    VBox buttonVbox = new VBox();
+    HBox buttonHbox = new HBox();
 
     Image image = null;
+
+    Text playerScore = new Text();
+    Text dealerScore = new Text();
+    Text currentTurn = new Text();
 
     @Override
     public void start(Stage stage) {
@@ -72,8 +85,23 @@ public class fxDriver extends Application {
         Button hitButton = new Button("Hit");
         Button checkButton = new Button("Check");
 
+        hitButton.setVisible(false);
+        hitButton.setManaged(false);
+
+        checkButton.setVisible(false);
+        checkButton.setManaged(false);
+
         EventHandler<ActionEvent> dealEvent = new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e){
+                hitButton.setVisible(true);
+                hitButton.setManaged(true);
+
+                checkButton.setVisible(true);
+                checkButton.setManaged(true);
+
+                dealButton.setVisible(false);
+                dealButton.setManaged(false);
+
                 deal();
             }
         };
@@ -92,18 +120,17 @@ public class fxDriver extends Application {
         hitButton.setOnAction(hitEvent);
         checkButton.setOnAction(checkEvent);
 
-        buttonVbox.setPadding(new Insets(0,15,0,15));
-        buttonVbox.setStyle("-fx-background-color: #99000b");
-        buttonVbox.setAlignment(Pos.CENTER);
+        buttonHbox.setPadding(new Insets(15,15,15,15));
+        buttonHbox.setStyle("-fx-background-color: #119b00");
+        buttonHbox.setAlignment(Pos.CENTER);
 
-        buttonVbox.getChildren().addAll(dealButton, hitButton, checkButton);
+        buttonHbox.getChildren().addAll(dealButton, hitButton, checkButton);
 
-        tablePane.setRight(buttonVbox);
+        tablePane.setCenter(buttonHbox);
 
         Scene scene = new Scene(tablePane);
         stage.setTitle("BlackJack");
-        stage.setWidth(1000);
-        stage.setHeight(800);
+        stage.setMaximized(true);
 
         stage.setScene(scene);
         stage.show();
