@@ -13,10 +13,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.layout.HBox;
 
+import javax.swing.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -52,6 +56,8 @@ public class fxDriver extends Application {
     HBox playerHbox = new HBox();
     HBox buttonHbox = new HBox();
 
+    VBox scoreVbox = new VBox();
+
     Image image = null;
 
     Text playerScore = new Text();
@@ -60,26 +66,26 @@ public class fxDriver extends Application {
 
     @Override
     public void start(Stage stage) {
+        setHBoxStyle(cardHbox);
+        setHBoxStyle(dealerHbox);
+        setHBoxStyle(playerHbox);
 
-        cardHbox.setPadding(new Insets(15,15,15,15));
-        cardHbox.setStyle("-fx-background-color: #119b00");
-        cardHbox.setAlignment(Pos.CENTER);
+        setVBoxStyle(scoreVbox);
 
-        dealerHbox.setPadding(new Insets(15,15,15,15));
-        dealerHbox.setStyle("-fx-background-color: #119b00");
-        dealerHbox.setAlignment(Pos.CENTER);
-
-        playerHbox.setPadding(new Insets(15,15,15,15));
-        playerHbox.setStyle("-fx-background-color: #119b00");
-        playerHbox.setAlignment(Pos.CENTER);
+        setTextStyle(playerScore);
+        setTextStyle(dealerScore);
+        setTextStyle(currentTurn);
 
         dealerPane.setCenter(dealerHbox);
         playerPane.setCenter(playerHbox);
         cardPane.setCenter(cardHbox);
 
+        scoreVbox.getChildren().addAll(playerScore, dealerScore, currentTurn);
+
         tablePane.setTop(dealerPane);
         tablePane.setCenter(cardPane);
         tablePane.setBottom(playerPane);
+        tablePane.setRight(scoreVbox);
 
         Button dealButton = new Button("Start");
         Button hitButton = new Button("Hit");
@@ -141,12 +147,26 @@ public class fxDriver extends Application {
         launch(args);
     }
 
+    public void setHBoxStyle(HBox box){
+        box.setPadding(new Insets(15,15,15,15));
+        box.setStyle("-fx-background-color: #119b00");
+        box.setAlignment(Pos.CENTER);
+    }
+    public void setVBoxStyle(VBox box){
+        box.setPadding(new Insets(15,15,15,15));
+        box.setStyle("-fx-background-color: #119b00");
+        box.setAlignment(Pos.CENTER);
+    }
+    public void setTextStyle(Text text){
+        text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
+    }
+
     public void addPlayerCardsGUI(Player p, ImageView cardView){
         playerHbox.getChildren().add(cardView);
     }
 
     public void resetPlayerCardsGUI(){
-        playerHbox.getChildren().removeAll();
+        playerHbox.getChildren().clear();
     }
 
     public void addDealerCardsGUI(ImageView cardView){
@@ -190,6 +210,7 @@ public class fxDriver extends Application {
             p.addCard(tempCard);
 
             p.updateTotal();
+            updatePlayerScore(p);
         }
 
         tempCard = deck.dealCard();
@@ -201,6 +222,8 @@ public class fxDriver extends Application {
         dealer.addCard(tempCard);
 
         dealer.updateTotal();
+
+        updateDealerScore(dealer);
     }
 
     public void hit(Player p){
@@ -248,7 +271,14 @@ public class fxDriver extends Application {
         }
 
         showDealerCardsGUI();
-
     }
+
+    public void updatePlayerScore(Player p){
+        playerScore.setText("Player: " + p.getTotal());
+    }
+    public void updateDealerScore(Dealer d){
+        dealerScore.setText("Dealer: " + d.getTotal());
+    }
+
 
 }
