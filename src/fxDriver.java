@@ -27,24 +27,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class fxDriver extends Application {
-
-    static boolean gameRunning = true;
     static ArrayList<Player> playersList = new ArrayList<Player>();
-    static HashMap<Player, Boolean> checkStatus = new HashMap<>();
-    static ArrayList<String> trackTurn = new ArrayList<String>(){
-        {
-            add("start");
-            add("player");
-            add("dealer");
-            add("end");
-        }
-    };
-    static String curTurn;
 
     static Deck deck = new Deck();
     Dealer dealer = new Dealer();
     private String tempCard = "";
 
+    Game game = new Game();
 
     BorderPane tablePane = new BorderPane();
     BorderPane playerPane = new BorderPane();
@@ -63,6 +52,10 @@ public class fxDriver extends Application {
     Text playerScore = new Text();
     Text dealerScore = new Text();
     Text currentTurn = new Text();
+
+    Button dealButton = new Button("Start");
+    Button hitButton = new Button("Hit");
+    Button checkButton = new Button("Check");
 
     @Override
     public void start(Stage stage) {
@@ -87,10 +80,6 @@ public class fxDriver extends Application {
         tablePane.setBottom(playerPane);
         tablePane.setRight(scoreVbox);
 
-        Button dealButton = new Button("Start");
-        Button hitButton = new Button("Hit");
-        Button checkButton = new Button("Check");
-
         hitButton.setVisible(false);
         hitButton.setManaged(false);
 
@@ -99,16 +88,7 @@ public class fxDriver extends Application {
 
         EventHandler<ActionEvent> dealEvent = new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e){
-                hitButton.setVisible(true);
-                hitButton.setManaged(true);
-
-                checkButton.setVisible(true);
-                checkButton.setManaged(true);
-
-                dealButton.setVisible(false);
-                dealButton.setManaged(false);
-
-                deal();
+                start();
             }
         };
         EventHandler<ActionEvent> hitEvent = new EventHandler<ActionEvent>() {
@@ -126,9 +106,7 @@ public class fxDriver extends Application {
         hitButton.setOnAction(hitEvent);
         checkButton.setOnAction(checkEvent);
 
-        buttonHbox.setPadding(new Insets(15,15,15,15));
-        buttonHbox.setStyle("-fx-background-color: #119b00");
-        buttonHbox.setAlignment(Pos.CENTER);
+        setHBoxStyle(buttonHbox);
 
         buttonHbox.getChildren().addAll(dealButton, hitButton, checkButton);
 
@@ -211,6 +189,7 @@ public class fxDriver extends Application {
 
             p.updateTotal();
             updatePlayerScore(p);
+
         }
 
         tempCard = deck.dealCard();
@@ -222,7 +201,6 @@ public class fxDriver extends Application {
         dealer.addCard(tempCard);
 
         dealer.updateTotal();
-
         updateDealerScore(dealer);
     }
 
@@ -232,26 +210,36 @@ public class fxDriver extends Application {
             addPlayerCardsGUI(p, cardToImage(tempCard));
             p.addCard(tempCard);
         }
+        updatePlayerScore(p);
         p.updateTotal();
         if(p.getTotal() > 21){
             p.busted();
-            System.out.println("bust");
+            findWinner();
         }
     }
 
     public void check(Player p){
-        checkStatus.put(p, true);
-        if(!checkStatus.containsKey(false)){
+        if(p.bustStatus() == false) {
             dealersTurn();
+        }else{
+            findWinner();
         }
     }
     public void dealersTurn(){
         dealer.updateTotal();
         while(dealer.logicHit() == true){
-            tempCard = deck.dealCard();
-            dealer.addCard(tempCard);
-            addDealerCardsGUI(cardToImage(tempCard));
-            dealer.updateTotal();
+            if(dealer.bustStatus() == false) {
+                if (dealer.getTotal() > 21) {
+                    dealer.busted();
+                    break;
+                }
+                tempCard = deck.dealCard();
+                dealer.addCard(tempCard);
+                addDealerCardsGUI(cardToImage(tempCard));
+                dealer.updateTotal();
+                updateDealerScore(dealer);
+
+            }
         }
         findWinner();
     }
@@ -261,16 +249,18 @@ public class fxDriver extends Application {
 
         for(Player p : playersList){
             if(p.getTotal() > dealer.getTotal() && p.bustStatus() == false){
-                System.out.println(p.getName() + " wins!");
+                currentTurn.setText(p.getName() + " wins!");
                 dealerwin = false;
             }
         }
 
         if(dealerwin){
-            System.out.println("Dealer wins");
+            currentTurn.setText("Dealer wins");
         }
 
         showDealerCardsGUI();
+
+        showStartButton();
     }
 
     public void updatePlayerScore(Player p){
@@ -280,5 +270,48 @@ public class fxDriver extends Application {
         dealerScore.setText("Dealer: " + d.getTotal());
     }
 
+    public void hideStartButton(){
+        hitButton.setVisible(true);
+        hitButton.setManaged(true);
 
+        checkButton.setVisible(true);
+        checkButton.setManaged(true);
+
+        dealButton.setVisible(false);
+        dealButton.setManaged(false);
+    }
+    public void showStartButton(){
+        hitButton.setVisible(false);
+        hitButton.setManaged(false);
+
+        checkButton.setVisible(false);
+        checkButton.setManaged(false);
+
+        dealButton.setVisible(true);
+        dealButton.setManaged(true);
+    }
+
+    public void start(){
+        hideStartButton();
+        currentTurn.setText("");
+
+        dealer.setBust(false);
+        dealer.resetCards();
+        dealer.setTotal(0);
+        updateDealerScore(dealer);
+
+        for(Player p : playersList){
+            p.setBust(false);
+            p.resetCards();
+            p.setTotal(0);
+            updatePlayerScore(p);
+        }
+
+        resetDealerCardsGUI();
+        resetPlayerCardsGUI();
+
+        deck.shuffle();
+
+        deal();
+    }
 }

@@ -51,4 +51,8 @@ public class Deck {
     public int randCol(){
         return (int)(Math.random() * 13);
     }
+
+    public void shuffle(){
+        usedCards = new ArrayList<>();
+    }
 }

@@ -2,10 +2,10 @@ import java.util.ArrayList;
 
 public class Player{
     String name = "";
-    ArrayList<String> playerCards = new ArrayList<String>();
+    ArrayList<String> cards = new ArrayList<String>();
     int total = 0;
-    boolean bust = false;
 
+    boolean bust = false;
 
     public Player(){
         setName("???");
@@ -15,17 +15,17 @@ public class Player{
         setName(name);
     }
     public ArrayList getCards(){
-        return playerCards;
+        return cards;
     }
     public void setCards(ArrayList<String> cards){
-        this.playerCards = cards;
+        this.cards = cards;
     }
     public void addCard(String card){
-        playerCards.add(card);
+        cards.add(card);
         updateTotal();
     }
     public void resetCards(){
-        playerCards = new ArrayList<String>();
+        cards = new ArrayList<String>();
     }
 
     public void setName(String name){
@@ -36,14 +36,15 @@ public class Player{
     }
 
     public void printCards(){
-        System.out.println(this.getName() + ": " + playerCards.toString() + " = " + this.getTotal());
+        System.out.println(this.getName() + ": " + cards.toString() + " = " + this.getTotal());
     }
 
     public void updateTotal(){
         total = 0;
-        for(String s : playerCards){
+        for(String s : cards){
            String temp = s.substring(0,1);
-           if(temp.equals("K") || temp.equals("Q") || temp.equals("J") || temp.equals("10")){
+           String tempTEN = s.substring(0,2);
+           if(temp.equals("K") || temp.equals("Q") || temp.equals("J") || tempTEN.equals("10")){
                total += 10;
            }else if(!temp.equals("A")){
                 total += Integer.parseInt(temp);
@@ -60,6 +61,9 @@ public class Player{
 
     public int getTotal(){
         return total;
+    }
+    public void setTotal(int x){
+        total = x;
     }
 
     public void busted(){
