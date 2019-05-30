@@ -33,8 +33,6 @@ public class fxDriver extends Application {
     Dealer dealer = new Dealer();
     private String tempCard = "";
 
-    Game game = new Game();
-
     BorderPane tablePane = new BorderPane();
     BorderPane playerPane = new BorderPane();
     BorderPane dealerPane = new BorderPane();
