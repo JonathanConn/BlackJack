@@ -40,6 +40,7 @@ public class Player{
     }
 
     public void updateTotal(){
+        int aceCount = 0;
         total = 0;
         for(String s : cards){
            String temp = s.substring(0,1);
@@ -48,15 +49,21 @@ public class Player{
                total += 10;
            }else if(!temp.equals("A")){
                 total += Integer.parseInt(temp);
-           }else{
-               if(total >= 21 && temp.equals("A")){
-                   total += 1;
-               }
-               if(total < 21 && temp.equals("A")){
-                   total += 11;
-               }
+           }else if(temp.equals("A")){
+               aceCount++;
            }
         }
+
+        while(aceCount > 0) {
+            int aceCheck = total + 11;
+            if (aceCheck <= 21) {
+                total += 11;
+            } else {
+                total += 1;
+            }
+            aceCount--;
+        }
+
     }
 
     public int getTotal(){

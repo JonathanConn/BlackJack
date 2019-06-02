@@ -33,8 +33,6 @@ public class fxDriver extends Application {
     Dealer dealer = new Dealer();
     private String tempCard = "";
 
-    Game game = new Game();
-
     BorderPane tablePane = new BorderPane();
     BorderPane playerPane = new BorderPane();
     BorderPane dealerPane = new BorderPane();
@@ -157,7 +155,6 @@ public class fxDriver extends Application {
         resetDealerCardsGUI();
         ArrayList<String> dealerCards = dealer.getCards();
         for(String s : dealerCards){
-            System.out.println(s + " dealer card");
             addDealerCardsGUI(cardToImage(s));
         }
     }
@@ -210,8 +207,8 @@ public class fxDriver extends Application {
             addPlayerCardsGUI(p, cardToImage(tempCard));
             p.addCard(tempCard);
         }
-        updatePlayerScore(p);
         p.updateTotal();
+        updatePlayerScore(p);
         if(p.getTotal() > 21){
             p.busted();
             findWinner();
@@ -226,36 +223,39 @@ public class fxDriver extends Application {
         }
     }
     public void dealersTurn(){
-        dealer.updateTotal();
         while(dealer.logicHit() == true){
-            if(dealer.bustStatus() == false) {
-                if (dealer.getTotal() > 21) {
-                    dealer.busted();
-                    break;
-                }
-                tempCard = deck.dealCard();
-                dealer.addCard(tempCard);
-                addDealerCardsGUI(cardToImage(tempCard));
-                dealer.updateTotal();
-                updateDealerScore(dealer);
+            tempCard = deck.dealCard();
+            dealer.addCard(tempCard);
+            addDealerCardsGUI(cardToImage(tempCard));
 
-            }
+            dealer.updateTotal();
+            updateDealerScore(dealer);
         }
         findWinner();
+
     }
 
     public void findWinner(){
         boolean dealerwin = true;
-
+        String winnerName = "";
+        if(dealer.bustStatus()){
+            dealerwin = false;
+        }
         for(Player p : playersList){
+            if(!dealerwin){
+                winnerName = p.getName();
+
+            }
             if(p.getTotal() > dealer.getTotal() && p.bustStatus() == false){
-                currentTurn.setText(p.getName() + " wins!");
+                winnerName = p.getName();
                 dealerwin = false;
             }
         }
 
         if(dealerwin){
             currentTurn.setText("Dealer wins");
+        }else{
+            currentTurn.setText(winnerName + " wins!");
         }
 
         showDealerCardsGUI();
